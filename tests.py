@@ -1,6 +1,6 @@
-# Version: 2
-# Date: 09.10.2018
-# Time: 23:32 GMT+5
+# Version: 3
+# Date: 28.11.2018
+# Time: 22:05 GMT+5
 
 # IMPORTS
 import unittest
@@ -58,7 +58,7 @@ class Test_nuke_base(unittest.TestCase):
 
 
 class Test_create_base_table_tests(unittest.TestCase):
-    # tests for table structure
+    # tests for tables structure
 
     def setUp(self):
         database_controller.create_base(test_database)
@@ -115,6 +115,7 @@ class Test_create_base_table_tests(unittest.TestCase):
             )''')
         test_conn.commit()
         test_conn.close()
+
 
 
 # MAIN CYCLE
