@@ -1,7 +1,7 @@
 # Module to manupulate database
-# Version: 3
-# Date: 28.11.2018
-# Time: 22:05 GMT+5
+# Version: 4
+# Date: 10.02.2019
+# Time: 17:22 GMT+5
 
 # IMPORTS
 import sqlite3
@@ -33,8 +33,16 @@ def create_base(database_name):
             Indicator_ID INTEGER PRIMARY KEY,
             Activity_ID integer,
             Indicator text,
-            Type_ID text,
-            FOREIGN KEY (Type_ID) REFERENCES Indicator_types(Type_ID)
+            Type_ID integer,
+            FOREIGN KEY (Type_ID) REFERENCES Indicator_types(Type_ID),
+            FOREIGN KEY (Activity_ID) REFERENCES UsersActivities(Activity_ID) 
+            )''')
+    c.execute('''CREATE TABLE IndicatorsValues (
+            Indicator_ID integer,
+            Time text,
+            Value text,
+            FOREIGN KEY (Indicator_ID) REFERENCES ActivitiesIndicators(Indicator_ID),
+            PRIMARY KEY (Indicator_ID, Time)
             )''')
     conn.commit()
     conn.close()
@@ -45,6 +53,9 @@ def nuke_base(database_name):
     c = conn.cursor()
     c.execute('''DROP TABLE IF EXISTS UsersActivities''')
     c.execute('''DROP TABLE IF EXISTS Users''')
+    c.execute('''DROP TABLE IF EXISTS ActivitiesIndicators''')
+    c.execute('''DROP TABLE IF EXISTS IndicatorsValues''')
+    c.execute('''DROP TABLE IF EXISTS Indicator_types''')
     conn.commit()
     conn.close()
 

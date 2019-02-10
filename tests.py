@@ -1,6 +1,6 @@
-# Version: 3
-# Date: 28.11.2018
-# Time: 22:05 GMT+5
+# Version: 4
+# Date: 10.02.2019
+# Time: 17:22 GMT+5
 
 # IMPORTS
 import unittest
@@ -116,7 +116,43 @@ class Test_create_base_table_tests(unittest.TestCase):
         test_conn.commit()
         test_conn.close()
 
+    def test_five(self):
+        # try to insert two values in Indicator_types table.
+        # Should not give an error.
+        test_conn = sqlite3.connect(test_database)
+        test_c = test_conn.cursor()
+        test_c.execute('''pragma foreign_keys = on''')
+        test_c.execute('''INSERT INTO Indicator_types Values(null, "date and time")''')
+        test_c.execute('''INSERT INTO Indicator_types Values(null, "date and time")''')
+        test_conn.commit()
+        test_conn.close()
 
+    def test_six(self):
+        # try to insert a value in table ActivitiesIndicators without
+        # appropriate values in foreign keys.
+        # Should give an error.
+        with self.assertRaises(sqlite3.IntegrityError):
+            test_conn = sqlite3.connect(test_database)
+            test_c = test_conn.cursor()
+            test_c.execute('''pragma foreign_keys = on''')
+            test_c.execute('''INSERT INTO ActivitiesIndicators Values (
+                    null, 1, "goga", 2)''')
+            test_conn.commit()
+            test_conn.close()
+
+    def test_seven(self):
+        # try to insert a value in table ActivitiesIndicators with all the
+        # other values in appropriate tables existing.
+        # Should not give an error
+        test_conn = sqlite3.connect(test_database)
+        test_c = test_conn.cursor()
+        test_c.execute('''pragma foreign_keys = on''')
+        test_c.execute('''INSERT INTO Indicator_types Values (null, "chislo raz")''')
+        test_c.execute('''INSERT INTO Users Values (null, "goga")''')
+        test_c.execute('''INSERT INTO UsersActivities Values (null, 1, "ronyat kal")''')
+        test_c.execute('''INSERT INTO ActivitiesIndicators Values (null, 1, "kak chasto", 1)''')
+        test_conn.commit()
+        test_conn.close()
 
 # MAIN CYCLE
 if __name__ == '__main__':
