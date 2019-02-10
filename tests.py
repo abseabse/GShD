@@ -1,6 +1,6 @@
-# Version: 4
-# Date: 10.02.2019
-# Time: 17:22 GMT+5
+# Version: 5
+# Date: 11.02.2019
+# Time: 02:38 GMT+5
 
 # IMPORTS
 import unittest
@@ -147,12 +147,46 @@ class Test_create_base_table_tests(unittest.TestCase):
         test_conn = sqlite3.connect(test_database)
         test_c = test_conn.cursor()
         test_c.execute('''pragma foreign_keys = on''')
-        test_c.execute('''INSERT INTO Indicator_types Values (null, "chislo raz")''')
+        test_c.execute('''INSERT INTO Indicator_types Values (
+                null, "chislo raz")''')
         test_c.execute('''INSERT INTO Users Values (null, "goga")''')
-        test_c.execute('''INSERT INTO UsersActivities Values (null, 1, "ronyat kal")''')
-        test_c.execute('''INSERT INTO ActivitiesIndicators Values (null, 1, "kak chasto", 1)''')
+        test_c.execute('''INSERT INTO UsersActivities Values (
+                null, 1, "ronyat kal")''')
+        test_c.execute('''INSERT INTO ActivitiesIndicators Values (
+                null, 1, "kak chasto", 1)''')
         test_conn.commit()
         test_conn.close()
+
+    def test_eight(self):
+        # try to insert a value in table IndicatorsValues without
+        # an appropriate value in foreign key.
+        # Should give an error.
+        with self.assertRaises(sqlite3.IntegrityError):
+            test_conn = sqlite3.connect(test_database)
+            test_c = test_conn.cursor()
+            test_c.execute('''pragma foreign_keys = on''')
+            test_c.execute('''INSERT INTO IndicatorsValues Values (1, null, "5")''')
+            test_conn.commit()
+            test_conn.close()
+
+    def test_nine(self):
+        # try to insert an appropriate value in table IndicatorsValues with
+        # all the other values in appropriate table existing.
+        # Should not give an error.
+        test_conn = sqlite3.connect(test_database)
+        test_c = test_conn.cursor()
+        test_c.execute('''pragma foreign_keys = on''')
+        test_c.execute('''INSERT INTO Indicator_types Values (
+                null, "chislo raz")''')
+        test_c.execute('''INSERT INTO Users Values (null, "goga")''')
+        test_c.execute('''INSERT INTO UsersActivities Values (
+                null, 1, "ronyat kal")''')
+        test_c.execute('''INSERT INTO ActivitiesIndicators Values (
+                null, 1, "kak chasto", 1)''')
+        test_c.execute('''INSERT INTO IndicatorsValues Values (1, null, 312)''')
+        test_conn.commit()
+        test_conn.close()
+
 
 # MAIN CYCLE
 if __name__ == '__main__':
