@@ -1,7 +1,7 @@
 # Module to manupulate database
-# Version: 4
-# Date: 10.02.2019
-# Time: 17:22 GMT+5
+# Version: 5
+# Date: 25.05.2019
+# Time: 15:26 GMT+5
 
 # IMPORTS
 import sqlite3
@@ -17,7 +17,7 @@ def create_base(database_name):
     c.execute('''pragma foreign_keys = on''')
     c.execute('''CREATE TABLE Users (
             User_ID INTEGER PRIMARY KEY, 
-            Username text
+            Username text NOT NULL UNIQUE
             )''')
     c.execute('''CREATE TABLE UsersActivities (
             Activity_ID INTEGER PRIMARY KEY,
@@ -56,6 +56,17 @@ def nuke_base(database_name):
     c.execute('''DROP TABLE IF EXISTS ActivitiesIndicators''')
     c.execute('''DROP TABLE IF EXISTS IndicatorsValues''')
     c.execute('''DROP TABLE IF EXISTS Indicator_types''')
+    conn.commit()
+    conn.close()
+
+def create_user(username, database_name):
+    # Creates a new user in the base
+    # conn = sqlite3.connect(database_name)
+    # c.conn.cursor()
+    # c.execute
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''INSERT INTO Users Values (null, "{}")'''.format(username))
     conn.commit()
     conn.close()
 
