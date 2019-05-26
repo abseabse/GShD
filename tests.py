@@ -1,6 +1,6 @@
-# Version: 6
-# Date: 25.05.2019
-# Time: 15:26 GMT+5
+# Version: 7 
+# Date: 27.05.2019
+# Time: 2:15 GMT+5
 
 # IMPORTS
 import unittest
@@ -188,7 +188,7 @@ class Test_create_base_table_tests(unittest.TestCase):
         test_conn.close()
 
 class Test_create_user(unittest.TestCase):
-    # tests for create_user function in database_controller.py
+    # tests for create_user() in database_controller.py
 
     def setUp(self):
         database_controller.create_base(test_database)
@@ -218,6 +218,37 @@ class Test_create_user(unittest.TestCase):
         database_controller.create_user('goga312', test_database)
         with self.assertRaises(sqlite3.IntegrityError):
             database_controller.create_user('goga312', test_database)
+
+class Test_delete_user(unittest.TestCase):
+    # tests for delete_user() in database_controller.py
+    
+    def setUp(self):
+        database_controller.create_base(test_database)
+
+    def tearDown(self):
+        database_controller.nuke_base(test_database)
+
+    def test_one(self):
+        # try to delete a single existing user.
+        # Should not give an error.
+        database_controller.create_user('goga312', test_database)
+        database_controller.delete_user('goga312', test_database)
+        test_conn = sqlite3.connect(test_database)
+        test_c = test_conn.cursor()
+        test_c.execute('''pragma foreign_keys = on''')
+        test_c.execute('''SELECT * from Users''')
+        self.assertEqual(test_c.fetchall(), [])
+
+    def test_two(self):
+        # try to delete a single non-existing user.
+        # Should not give an error
+        database_controller.delete_user('goga312', test_database)
+
+    def test_three(self):
+        # try to delete a user with other information entered
+        # Should give an error (as there are foreign keys)
+        # TODO write the test
+        pass
 
 # MAIN CYCLE
 if __name__ == '__main__':

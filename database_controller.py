@@ -1,7 +1,7 @@
 # Module to manupulate database
-# Version: 5
-# Date: 25.05.2019
-# Time: 15:26 GMT+5
+# Version: 6
+# Date: 27.05.2019
+# Time: 2:14 GMT+5
 
 # IMPORTS
 import sqlite3
@@ -61,12 +61,19 @@ def nuke_base(database_name):
 
 def create_user(username, database_name):
     # Creates a new user in the base
-    # conn = sqlite3.connect(database_name)
-    # c.conn.cursor()
-    # c.execute
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
     c.execute('''INSERT INTO Users Values (null, "{}")'''.format(username))
+    conn.commit()
+    conn.close()
+
+def delete_user(username, database_name):
+    # deletes an existing user from the database
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''pragma foreign_keys = on''')
+    c.execute('''DELETE FROM Users
+                    WHERE Username = "{}"'''.format(username))
     conn.commit()
     conn.close()
 
