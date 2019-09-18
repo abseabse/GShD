@@ -1,7 +1,7 @@
 # Module to manupulate database
 # Version: 6
-# Date: 27.05.2019
-# Time: 2:14 GMT+5
+# Date: 18.09.2019
+# Time: 23:06 GMT+5
 
 # IMPORTS
 import sqlite3
@@ -63,7 +63,7 @@ def create_user(username, database_name):
     # Creates a new user in the base
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
-    c.execute('''INSERT INTO Users Values (null, "{}")'''.format(username))
+    c.execute('''INSERT INTO Users Values (null, ?)''', (username,))
     conn.commit()
     conn.close()
 
@@ -73,10 +73,24 @@ def delete_user(username, database_name):
     c = conn.cursor()
     c.execute('''pragma foreign_keys = on''')
     c.execute('''DELETE FROM Users
-                    WHERE Username = "{}"'''.format(username))
+                    WHERE Username = ?''', (username,))
     conn.commit()
     conn.close()
 
+def user_exists(username, database_name):
+    # Searches for the user in the database, if he exists returns True otherwise - False
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT * FROM Users WHERE Username = ?''', (username,))
+    output = c.fetchone()
+    conn.commit()
+    conn.close()
+    if type(output) == type(()):
+        return True
+    else:
+        return False
+
+    
 # CODE
 if __name__ == '__main__':
     create_base(database_name)
